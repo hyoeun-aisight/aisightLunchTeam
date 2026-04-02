@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🍱 점심 팀 나누기</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Gmarket+Sans:wght@300;500;700&family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #fdf6ec;
+      --warm-white: #fffbf5;
+      --ink: #1a1208;
+      --ink-light: #5a4a35;
+      --korean: #e85d3a;
+      --chinese: #d4380d;
+      --japanese: #c41d7f;
+      --salad: #389e0d;
+      --alone: #7c5cfc;
+      --border: #e8d9c0;
+      --shadow: rgba(90, 60, 20, 0.12);
+    }
+
+    body {
+      background-color: var(--cream);
+      background-image:
+        radial-gradient(ellipse at 20% 10%, rgba(232, 93, 58, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 90%, rgba(124, 92, 252, 0.06) 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a87a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      min-height: 100vh;
+      font-family: 'Gmarket Sans', sans-serif;
+      color: var(--ink);
+    }
+
+    /* ── HEADER ── */
+    header {
+      text-align: center;
+      padding: 48px 20px 32px;
+      position: relative;
+    }
+
+    .header-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--ink-light);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      font-weight: 300;
+    }
+
+    header h1 {
+      font-family: 'Nanum Myeongjo', serif;
+      font-size: clamp(2rem, 6vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+    }
+
+    header h1 span {
+      color: var(--korean);
+    }
+
+    .date-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      background: var(--ink);
+      color: var(--cream);
+      padding: 6px 18px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    .total-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      margin-left: 10px;
+      background: var(--korean);
+      color: #fff;
+      padding: 6px 18px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* ── GRID ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--warm-white);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 4px 24px var(--shadow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 20px 20px 0 0;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 40px var(--shadow);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .card-emoji {
+      font-size: 2rem;
+      line-height: 1;
+      background: color-mix(in srgb, var(--accent) 10%, transparent);
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .card-title {
+      font-family: 'Nanum Myeongjo', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .card-subtitle {
+      font-size: 11px;
+      color: var(--ink-light);
+      margin-top: 2px;
+      font-weight: 300;
+    }
+
+    .count-pill {
+      margin-left: auto;
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      min-width: 28px;
+      height: 28px;
+      border-radius: 100px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 10px;
+      transition: transform 0.2s;
+    }
+
+    /* ── INPUT ── */
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .input-row input {
+      flex: 1;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-family: 'Gmarket Sans', sans-serif;
+      font-size: 14px;
+      background: var(--cream);
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-row input:focus {
+      border-color: var(--accent);
+    }
+
+    .input-row input::placeholder { color: #b8a898; }
+
+    .btn-add {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      line-height: 1;
+    }
+
+    .btn-add:hover { opacity: 0.85; }
+    .btn-add:active { transform: scale(0.95); }
+
+    /* ── NAME TAGS ── */
+    .name-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 36px;
+    }
+
+    .name-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: color-mix(in srgb, var(--accent) 12%, var(--cream));
+      border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+      color: var(--ink);
+      padding: 6px 12px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .name-tag .remove-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--ink-light);
+      font-size: 14px;
+      line-height: 1;
+      padding: 0;
+      display: flex; align-items: center;
+      transition: color 0.15s, transform 0.15s;
+    }
+
+    .name-tag .remove-btn:hover { color: #e83a3a; transform: rotate(90deg); }
+
+    .empty-hint {
+      font-size: 12px;
+      color: #c0a888;
+      font-style: italic;
+      font-weight: 300;
+      align-self: center;
+    }
+
+    /* ── ALONE CARD spans full width ── */
+    .card-alone {
+      grid-column: 1 / -1;
+      --accent: var(--alone);
+    }
+
+    .card-korean  { --accent: var(--korean); }
+    .card-chinese { --accent: var(--chinese); }
+    .card-japanese { --accent: var(--japanese); }
+    .card-salad   { --accent: var(--salad); }
+
+    /* ── FOOTER ACTIONS ── */
+    .actions {
+      text-align: center;
+      padding: 0 20px 60px;
+    }
+
+    .btn-reset {
+      background: transparent;
+      border: 2px solid var(--border);
+      color: var(--ink-light);
+      padding: 12px 32px;
+      border-radius: 100px;
+      font-family: 'Gmarket Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.03em;
+    }
+
+    .btn-reset:hover {
+      background: var(--ink);
+      color: var(--cream);
+      border-color: var(--ink);
+    }
+
+    /* ── SUMMARY BANNER ── */
+    .summary {
+      max-width: 1100px;
+      margin: 0 auto 24px;
+      padding: 0 20px;
+    }
+
+    .summary-inner {
+      background: var(--ink);
+      color: var(--cream);
+      border-radius: 16px;
+      padding: 18px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      align-items: center;
+    }
+
+    .summary-label {
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      opacity: 0.5;
+      text-transform: uppercase;
+      font-weight: 300;
+      width: 100%;
+    }
+
+    .summary-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .summary-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--dot-color);
+    }
+
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr; }
+      .card-alone { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <p class="header-eyebrow">Team Lunch Organizer</p>
+  <h1>오늘 점심<span>,</span><br>뭐 드실 건가요?</h1>
+  <div style="margin-top:16px;">
+    <span class="date-badge">📅 <span id="today-date"></span></span>
+    <span class="total-badge">👥 총 <span id="total-count">0</span>명 참여</span>
+  </div>
+</header>
+
+<div class="summary">
+  <div class="summary-inner">
+    <span class="summary-label">오늘의 팀 현황</span>
+    <div class="summary-item"><span class="summary-dot" style="--dot-color: var(--korean)"></span> 한식 <strong id="s-korean">0</strong>명</div>
+    <div class="summary-item"><span class="summary-dot" style="--dot-color: var(--chinese)"></span> 중식 <strong id="s-chinese">0</strong>명</div>
+    <div class="summary-item"><span class="summary-dot" style="--dot-color: var(--japanese)"></span> 일식 <strong id="s-japanese">0</strong>명</div>
+    <div class="summary-item"><span class="summary-dot" style="--dot-color: var(--salad)"></span> 샐러드 <strong id="s-salad">0</strong>명</div>
+    <div class="summary-item"><span class="summary-dot" style="--dot-color: var(--alone)"></span> 혼자 <strong id="s-alone">0</strong>명</div>
+  </div>
+</div>
+
+<div class="grid">
+
+  <!-- 한식 -->
+  <div class="card card-korean">
+    <div class="card-header">
+      <div class="card-emoji">🍚</div>
+      <div>
+        <div class="card-title">한식</div>
+        <div class="card-subtitle">Korean Food</div>
+      </div>
+      <div class="count-pill" id="count-korean">0</div>
+    </div>
+    <div class="input-row">
+      <input type="text" placeholder="이름 입력 후 Enter" id="input-korean" maxlength="10">
+      <button class="btn-add" onclick="addName('korean')">＋</button>
+    </div>
+    <div class="name-list" id="list-korean">
+      <span class="empty-hint">아직 아무도 없어요</span>
+    </div>
+  </div>
+
+  <!-- 중식 -->
+  <div class="card card-chinese">
+    <div class="card-header">
+      <div class="card-emoji">🥢</div>
+      <div>
+        <div class="card-title">중식</div>
+        <div class="card-subtitle">Chinese Food</div>
+      </div>
+      <div class="count-pill" id="count-chinese">0</div>
+    </div>
+    <div class="input-row">
+      <input type="text" placeholder="이름 입력 후 Enter" id="input-chinese" maxlength="10">
+      <button class="btn-add" onclick="addName('chinese')">＋</button>
+    </div>
+    <div class="name-list" id="list-chinese">
+      <span class="empty-hint">아직 아무도 없어요</span>
+    </div>
+  </div>
+
+  <!-- 일식 -->
+  <div class="card card-japanese">
+    <div class="card-header">
+      <div class="card-emoji">🍣</div>
+      <div>
+        <div class="card-title">일식</div>
+        <div class="card-subtitle">Japanese Food</div>
+      </div>
+      <div class="count-pill" id="count-japanese">0</div>
+    </div>
+    <div class="input-row">
+      <input type="text" placeholder="이름 입력 후 Enter" id="input-japanese" maxlength="10">
+      <button class="btn-add" onclick="addName('japanese')">＋</button>
+    </div>
+    <div class="name-list" id="list-japanese">
+      <span class="empty-hint">아직 아무도 없어요</span>
+    </div>
+  </div>
+
+  <!-- 샐러드 -->
+  <div class="card card-salad">
+    <div class="card-header">
+      <div class="card-emoji">🥗</div>
+      <div>
+        <div class="card-title">샐러드</div>
+        <div class="card-subtitle">Salad</div>
+      </div>
+      <div class="count-pill" id="count-salad">0</div>
+    </div>
+    <div class="input-row">
+      <input type="text" placeholder="이름 입력 후 Enter" id="input-salad" maxlength="10">
+      <button class="btn-add" onclick="addName('salad')">＋</button>
+    </div>
+    <div class="name-list" id="list-salad">
+      <span class="empty-hint">아직 아무도 없어요</span>
+    </div>
+  </div>
+
+  <!-- 혼자 -->
+  <div class="card card-alone">
+    <div class="card-header">
+      <div class="card-emoji">🚶</div>
+      <div>
+        <div class="card-title">혼자 — 따로 먹을게요!</div>
+        <div class="card-subtitle">Going Solo Today</div>
+      </div>
+      <div class="count-pill" id="count-alone">0</div>
+    </div>
+    <div class="input-row">
+      <input type="text" placeholder="이름 입력 후 Enter" id="input-alone" maxlength="10">
+      <button class="btn-add" onclick="addName('alone')">＋</button>
+    </div>
+    <div class="name-list" id="list-alone">
+      <span class="empty-hint">아직 아무도 없어요</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="actions">
+  <button class="btn-reset" onclick="resetAll()">🗑️ 오늘 데이터 초기화</button>
+</div>
+
+<script>
+  const CATEGORIES = ['korean', 'chinese', 'japanese', 'salad', 'alone'];
+  const TODAY_KEY = 'lunch_date';
+  const DATA_KEY  = 'lunch_data';
+
+  // ── 날짜 체크: 날짜 바뀌면 자동 초기화 ──
+  function getTodayStr() {
+    return new Date().toLocaleDateString('ko-KR', { year:'numeric', month:'2-digit', day:'2-digit' });
+  }
+
+  function loadData() {
+    const savedDate = localStorage.getItem(TODAY_KEY);
+    const today = getTodayStr();
+    if (savedDate !== today) {
+      localStorage.setItem(TODAY_KEY, today);
+      localStorage.setItem(DATA_KEY, JSON.stringify({}));
+    }
+    const raw = localStorage.getItem(DATA_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }
+
+  function saveData(data) {
+    localStorage.setItem(DATA_KEY, JSON.stringify(data));
+  }
+
+  // ── 렌더링 ──
+  function render() {
+    const data = loadData();
+    let total = 0;
+
+    CATEGORIES.forEach(cat => {
+      const names = data[cat] || [];
+      total += names.length;
+
+      // count pills
+      document.getElementById(`count-${cat}`).textContent = names.length;
+      // summary
+      const sEl = document.getElementById(`s-${cat}`);
+      if (sEl) sEl.textContent = names.length;
+
+      // name list
+      const listEl = document.getElementById(`list-${cat}`);
+      listEl.innerHTML = '';
+
+      if (names.length === 0) {
+        listEl.innerHTML = '<span class="empty-hint">아직 아무도 없어요</span>';
+        return;
+      }
+
+      names.forEach((name, idx) => {
+        const tag = document.createElement('span');
+        tag.className = 'name-tag';
+        tag.innerHTML = `${name} <button class="remove-btn" onclick="removeName('${cat}', ${idx})" title="삭제">✕</button>`;
+        listEl.appendChild(tag);
+      });
+    });
+
+    document.getElementById('total-count').textContent = total;
+  }
+
+  // ── 이름 추가 ──
+  function addName(cat) {
+    const input = document.getElementById(`input-${cat}`);
+    const name = input.value.trim();
+    if (!name) return;
+
+    const data = loadData();
+    if (!data[cat]) data[cat] = [];
+
+    // 중복 체크 (전체 카테고리)
+    const allNames = CATEGORIES.flatMap(c => data[c] || []);
+    if (allNames.includes(name)) {
+      input.style.borderColor = '#e83a3a';
+      input.placeholder = '이미 등록된 이름이에요!';
+      input.value = '';
+      setTimeout(() => {
+        input.style.borderColor = '';
+        input.placeholder = '이름 입력 후 Enter';
+      }, 1800);
+      return;
+    }
+
+    data[cat].push(name);
+    saveData(data);
+    input.value = '';
+    render();
+  }
+
+  // ── 이름 삭제 ──
+  function removeName(cat, idx) {
+    const data = loadData();
+    if (!data[cat]) return;
+    data[cat].splice(idx, 1);
+    saveData(data);
+    render();
+  }
+
+  // ── 초기화 ──
+  function resetAll() {
+    if (!confirm('오늘 점심 데이터를 모두 초기화할까요?')) return;
+    localStorage.setItem(DATA_KEY, JSON.stringify({}));
+    render();
+  }
+
+  // ── Enter 키 입력 ──
+  CATEGORIES.forEach(cat => {
+    document.getElementById(`input-${cat}`).addEventListener('keydown', e => {
+      if (e.key === 'Enter') addName(cat);
+    });
+  });
+
+  // ── 날짜 표시 ──
+  const now = new Date();
+  document.getElementById('today-date').textContent = now.toLocaleDateString('ko-KR', {
+    year: 'numeric', month: 'long', day: 'numeric', weekday: 'short'
+  });
+
+  // ── 초기 렌더 ──
+  render();
+</script>
+</body>
+</html>
