@@ -1,2 +1,2 @@
 # aisightLunchTeam
-Lunch Team based what you wanna eat 
+Lunch Team based on what you wanna eat 
