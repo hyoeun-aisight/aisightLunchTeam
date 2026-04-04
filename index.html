@@ -7,12 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    .nanum-gothic-coding-regular {
-      font-family: "Nanum Gothic Coding", monospace;
-      font-weight: 400;
-      font-style: normal;
-    }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -42,7 +36,6 @@
       color: var(--ink);
     }
 
-    /* ── HEADER ── */
     header {
       text-align: center;
       padding: 48px 20px 32px;
@@ -98,7 +91,36 @@
       font-family: var(--font-kr);
     }
 
-    /* ── LOCKED BANNER ── */
+    /* 로딩 오버레이 */
+    #loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .loading-spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--korean);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text {
+      font-family: var(--font-kr);
+      font-size: 14px;
+      color: var(--ink-light);
+    }
+
+    /* LOCKED BANNER */
     .locked-banner {
       max-width: 1100px;
       margin: 0 auto 24px;
@@ -151,7 +173,7 @@
     .day-pill.on  { background: var(--korean); color: #fff; border-color: var(--korean); }
     .day-pill.off { background: transparent; color: var(--ink-light); }
 
-    /* ── GRID ── */
+    /* GRID */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -161,7 +183,7 @@
       padding: 0 20px 40px;
     }
 
-    /* ── CARD ── */
+    /* CARD */
     .card {
       background: var(--warm-white);
       border: 1.5px solid var(--border);
@@ -250,7 +272,7 @@
     .card-salad   .count-pill { background: var(--salad); }
     .card-alone   .count-pill { background: var(--alone); }
 
-    /* ── INPUT ── */
+    /* INPUT */
     .input-row {
       display: flex;
       gap: 8px;
@@ -293,6 +315,7 @@
     .card-korean  .btn-add { background: var(--korean); }
     .card-chinese .btn-add { background: var(--chinese); }
     .card-western .btn-add { background: var(--western); }
+    .card-japanese .btn-add { background: var(--western); }
     .card-japanese .btn-add { background: var(--japanese); }
     .card-salad   .btn-add { background: var(--salad); }
     .card-alone   .btn-add { background: var(--alone); }
@@ -300,7 +323,7 @@
     .btn-add:hover { opacity: 0.85; }
     .btn-add:active { transform: scale(0.95); }
 
-    /* ── NAME TAGS ── */
+    /* NAME TAGS */
     .name-list {
       display: flex;
       flex-wrap: wrap;
@@ -347,6 +370,9 @@
 
     .name-tag .remove-btn:hover { color: #e83a3a; transform: rotate(90deg); }
 
+    /* 삭제 불가 태그 — ✕ 없음, 살짝 투명 */
+    .name-tag.readonly { opacity: 0.75; }
+
     .empty-hint {
       font-size: 12px;
       color: #c0a888;
@@ -356,10 +382,9 @@
       align-self: center;
     }
 
-    /* ── ALONE CARD spans full width ── */
     .card-alone { grid-column: 1 / -1; }
 
-    /* ── FOOTER ACTIONS ── */
+    /* FOOTER ACTIONS */
     .actions {
       text-align: center;
       padding: 0 20px 60px;
@@ -385,7 +410,7 @@
       border-color: var(--ink);
     }
 
-    /* ── SUMMARY BANNER ── */
+    /* SUMMARY BANNER */
     .summary {
       max-width: 1100px;
       margin: 0 auto 24px;
@@ -427,7 +452,7 @@
       border-radius: 50%;
     }
 
-    /* ── MODAL ── */
+    /* MODAL */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -550,16 +575,22 @@
 </head>
 <body>
 
+<!-- 로딩 오버레이 -->
+<div id="loading-overlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">데이터 불러오는 중...</div>
+</div>
+
 <header>
   <p class="header-eyebrow">Aisight Korea Office Team Lunch Organizer</p>
-  <h1>오늘 점심<span>,</span><br>뭐 드실 건가요?</h1>
+  <h1>오늘 점심<span></span><br>뭐 드실 건가요?</h1>
   <div style="margin-top:16px;">
     <span class="date-badge">📅 <span id="today-date"></span></span>
     <span class="total-badge">👥 총 <span id="total-count">0</span>명 참여</span>
   </div>
 </header>
 
-<!-- 잠금 배너 (월/수 외 요일) -->
+<!-- 잠금 배너 -->
 <div class="locked-banner" id="locked-banner" style="display:none">
   <div class="locked-inner">
     <div class="lock-icon">🔒</div>
@@ -586,7 +617,6 @@
 
   <div class="grid">
 
-    <!-- 한식 -->
     <div class="card card-korean">
       <div class="card-header">
         <div class="card-emoji">🍚</div>
@@ -605,7 +635,6 @@
       </div>
     </div>
 
-    <!-- 중식 -->
     <div class="card card-chinese">
       <div class="card-header">
         <div class="card-emoji">🥢</div>
@@ -624,7 +653,6 @@
       </div>
     </div>
 
-    <!-- 양식 -->
     <div class="card card-western">
       <div class="card-header">
         <div class="card-emoji">🍝</div>
@@ -643,7 +671,6 @@
       </div>
     </div>
 
-    <!-- 일식 -->
     <div class="card card-japanese">
       <div class="card-header">
         <div class="card-emoji">🍣</div>
@@ -662,7 +689,6 @@
       </div>
     </div>
 
-    <!-- 샐러드 -->
     <div class="card card-salad">
       <div class="card-header">
         <div class="card-emoji">🥗</div>
@@ -681,7 +707,6 @@
       </div>
     </div>
 
-    <!-- 혼자 -->
     <div class="card card-alone">
       <div class="card-header">
         <div class="card-emoji">🚶</div>
@@ -730,47 +755,75 @@
   </div>
 </div>
 
-<script>
-  /* ── 설정 ── */
-  const ADMIN_PASSWORD = 'hyoeun01'; // ← 여기서 비밀번호 변경
-  const CATEGORIES = ['korean', 'chinese', 'western', 'japanese', 'salad', 'alone'];
-  const ALLOWED_DAYS = [1, 3, 6]; // 1 = 월요일, 3 = 수요일 추후 변경해야함
-  const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토'];
-  const TODAY_KEY = 'lunch_date';
-  const DATA_KEY  = 'lunch_data';
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+  import { getDatabase, ref, set, remove, onValue, get } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
 
-  /* ── 날짜 & 요일 ── */
+  /* ── 설정 ── */
+  const ADMIN_PASSWORD = 'hyoeun01';
+  const CATEGORIES = ['korean', 'chinese', 'western', 'japanese', 'salad', 'alone'];
+  const ALLOWED_DAYS = [1, 3, 6]; // 월(1), 수(3)
+  const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토'];
+
+  /* ── Firebase 초기화 ── */
+  const firebaseConfig = {
+    apiKey: "AIzaSyDwYLPPFyBsAZzHuAFCkH1Z6GrI7_0T8BI",
+    authDomain: "aisight-meeting-room.firebaseapp.com",
+    databaseURL: "https://aisight-meeting-room-default-rtdb.firebaseio.com",
+    projectId: "aisight-meeting-room",
+    storageBucket: "aisight-meeting-room.firebasestorage.app",
+    messagingSenderId: "100124839761",
+    appId: "1:100124839761:web:4883bd96813bab53f00d70",
+    measurementId: "G-2XLKPK62D0"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  /* ── 날짜 ── */
   function getTodayStr() {
-    return new Date().toLocaleDateString('ko-KR', { year:'numeric', month:'2-digit', day:'2-digit' });
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
 
   function isAllowedDay() {
     return ALLOWED_DAYS.includes(new Date().getDay());
   }
 
-  /* ── 데이터 ── */
-  function loadData() {
-    const savedDate = localStorage.getItem(TODAY_KEY);
-    const today = getTodayStr();
-    if (savedDate !== today) {
-      localStorage.setItem(TODAY_KEY, today);
-      localStorage.setItem(DATA_KEY, JSON.stringify({}));
+  /* ── 본인 식별 ID (브라우저별 고유값) ── */
+  function getMyId() {
+    let id = localStorage.getItem('lunch_uid');
+    if (!id) {
+      id = 'u_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+      localStorage.setItem('lunch_uid', id);
     }
-    const raw = localStorage.getItem(DATA_KEY);
-    return raw ? JSON.parse(raw) : {};
+    return id;
   }
 
-  function saveData(data) {
-    localStorage.setItem(DATA_KEY, JSON.stringify(data));
+  const MY_ID = getMyId();
+  const TODAY = getTodayStr();
+
+  /* ── Firebase 경로 ── */
+  // 구조: lunch/{date}/{category}/{uid} = name
+  function catRef(cat) {
+    return ref(db, `lunch/${TODAY}/${cat}`);
+  }
+  function entryRef(cat, uid) {
+    return ref(db, `lunch/${TODAY}/${cat}/${uid}`);
+  }
+  function rootRef() {
+    return ref(db, `lunch/${TODAY}`);
   }
 
   /* ── 렌더링 ── */
-  function render() {
-    const data = loadData();
+  function renderData(allData) {
     let total = 0;
 
     CATEGORIES.forEach(cat => {
-      const names = data[cat] || [];
+      const entries = allData[cat] || {};
+      // entries = { uid: name, uid2: name2, ... }
+      const names = Object.entries(entries); // [[uid, name], ...]
       total += names.length;
 
       document.getElementById(`count-${cat}`).textContent = names.length;
@@ -785,10 +838,18 @@
         return;
       }
 
-      names.forEach((name, idx) => {
+      names.forEach(([uid, name]) => {
         const tag = document.createElement('span');
-        tag.className = 'name-tag';
-        tag.innerHTML = `${name} <button class="remove-btn" onclick="removeName('${cat}', ${idx})" title="삭제">✕</button>`;
+        const isMine = uid === MY_ID;
+        tag.className = 'name-tag' + (isMine ? '' : ' readonly');
+
+        if (isMine) {
+          tag.innerHTML = `${name} <button class="remove-btn" title="삭제">✕</button>`;
+          tag.querySelector('.remove-btn').addEventListener('click', () => removeName(cat, uid));
+        } else {
+          tag.textContent = name;
+        }
+
         listEl.appendChild(tag);
       });
     });
@@ -797,17 +858,26 @@
   }
 
   /* ── 이름 추가 ── */
-  function addName(cat) {
+  window.addName = async function(cat) {
     if (!isAllowedDay()) return;
     const input = document.getElementById(`input-${cat}`);
     const name = input.value.trim();
     if (!name) return;
 
-    const data = loadData();
-    if (!data[cat]) data[cat] = [];
+    // 이미 내가 어딘가에 등록했는지 확인
+    const snap = await get(rootRef());
+    const allData = snap.val() || {};
 
-    const allNames = CATEGORIES.flatMap(c => data[c] || []);
-    if (allNames.includes(name)) {
+    // 같은 이름이 있는지 확인
+    let duplicate = false;
+    CATEGORIES.forEach(c => {
+      const entries = allData[c] || {};
+      Object.values(entries).forEach(n => {
+        if (n === name) duplicate = true;
+      });
+    });
+
+    if (duplicate) {
       input.style.borderColor = '#e83a3a';
       input.placeholder = '이미 등록된 이름이에요!';
       input.value = '';
@@ -818,36 +888,38 @@
       return;
     }
 
-    data[cat].push(name);
-    saveData(data);
+    // 내 UID가 이미 어딘가에 있으면 제거 (카테고리 이동)
+    for (const c of CATEGORIES) {
+      const entries = allData[c] || {};
+      if (MY_ID in entries) {
+        await remove(entryRef(c, MY_ID));
+      }
+    }
+
+    await set(entryRef(cat, MY_ID), name);
     input.value = '';
-    render();
-  }
+  };
 
   /* ── 이름 삭제 ── */
-  function removeName(cat, idx) {
-    if (!isAllowedDay()) return;
-    const data = loadData();
-    if (!data[cat]) return;
-    data[cat].splice(idx, 1);
-    saveData(data);
-    render();
+  async function removeName(cat, uid) {
+    if (uid !== MY_ID) return; // 보안: 본인만
+    await remove(entryRef(cat, uid));
   }
 
   /* ── 관리자 모달 ── */
-  function openResetModal() {
+  window.openResetModal = function() {
     document.getElementById('modal-overlay').classList.add('open');
     document.getElementById('pw-input').value = '';
     document.getElementById('pw-error').textContent = '';
     document.getElementById('pw-input').classList.remove('error');
     setTimeout(() => document.getElementById('pw-input').focus(), 80);
-  }
+  };
 
-  function closeModal() {
+  window.closeModal = function() {
     document.getElementById('modal-overlay').classList.remove('open');
-  }
+  };
 
-  function doReset() {
+  window.doReset = async function() {
     const pw = document.getElementById('pw-input').value;
     if (pw !== ADMIN_PASSWORD) {
       const input = document.getElementById('pw-input');
@@ -857,12 +929,10 @@
       setTimeout(() => input.classList.remove('error'), 400);
       return;
     }
-    localStorage.setItem(DATA_KEY, JSON.stringify({}));
+    await remove(rootRef());
     closeModal();
-    render();
-  }
+  };
 
-  /* 모달 외부 클릭 시 닫기 */
   document.getElementById('modal-overlay').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
   });
@@ -884,6 +954,7 @@
   if (!isAllowedDay()) {
     document.getElementById('locked-banner').style.display = 'block';
     document.getElementById('main-content').style.display = 'none';
+    document.getElementById('loading-overlay').style.display = 'none';
 
     const pillsEl = document.getElementById('day-pills');
     DAY_NAMES.forEach((name, i) => {
@@ -893,8 +964,16 @@
       pillsEl.appendChild(pill);
     });
   } else {
-    render();
+    /* ── 실시간 리스너 ── */
+    onValue(rootRef(), (snap) => {
+      const allData = snap.val() || {};
+      renderData(allData);
+      // 로딩 오버레이 제거 (첫 데이터 수신 후)
+      const overlay = document.getElementById('loading-overlay');
+      if (overlay) overlay.style.display = 'none';
+    });
   }
 </script>
+
 </body>
 </html>
