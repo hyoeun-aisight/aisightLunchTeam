@@ -665,7 +665,7 @@
   ];
 
   const CATEGORIES  = ['korean','chinese','western','japanese','salad','alone'];
-  const ALLOWED_DAYS = [1, 2, 3, 4, 5];
+  const ALLOWED_DAYS = [1, 3]
   const DAY_NAMES    = ['일','월','화','수','목','금','토'];
   const ADMIN_PASSWORD = 'hyoeun01';
 
@@ -723,12 +723,12 @@ const isAllowed   = () => ALLOWED_DAYS.includes(DOW);
 
   /* ══════════ 라우팅 ══════════ */
   function route() {
-    const loading = document.getElementById('loading-overlay');
+  const loading = document.getElementById('loading-overlay');
+  const params = new URLSearchParams(location.search);
+  const page = params.get('page');
 
-    const params = new URLSearchParams(location.search);
-    const page = params.get('page');
-
-      if (page === 'roulette') {
+  // 1) URL로 강제 진입
+  if (page === 'roulette') {
     document.getElementById('main-title').innerHTML = '수요일은<span class="accent-wed">,</span><br>팀 뽑기 데이 🎲';
     document.getElementById('total-badge').style.display = 'none';
     document.getElementById('wed-page').style.display = 'block';
@@ -741,7 +741,11 @@ const isAllowed   = () => ALLOWED_DAYS.includes(DOW);
   }
 
   if (page === 'lunch') {
+    document.getElementById('main-title').innerHTML = '오늘 점심<span class="accent">,</span><br>뭐 드실 건가요?';
+    document.getElementById('total-badge').style.display = 'inline-flex';
     document.getElementById('mon-content').style.display = 'block';
+
+    if (isLastMondayOfMonth()) showWomenPopup();
 
     onValue(rootRef(), snap => {
       loading.style.display = 'none';
@@ -751,44 +755,55 @@ const isAllowed   = () => ALLOWED_DAYS.includes(DOW);
     });
     return;
   }
-    
-    if (!isAllowed()) {
-      document.getElementById('locked-banner').style.display = 'block';
-      loading.style.display = 'none';
-      const pillsEl = document.getElementById('day-pills');
-      DAY_NAMES.forEach((name,i) => {
-        const pill = document.createElement('span');
-        pill.className = 'day-pill '+(ALLOWED_DAYS.includes(i)?'on':'off');
-        pill.textContent = name;
-        pillsEl.appendChild(pill);
-      });
-      return;
-    }
 
-    if (isWednesday()) {
-      document.getElementById('main-title').innerHTML = '수요일은<span class="accent-wed">,</span><br>팀 뽑기 데이 🎲';
-      document.getElementById('total-badge').style.display = 'none';
-      document.getElementById('wed-page').style.display = 'block';
+  // 2) 기본 진입은 월/수만 허용
+  if (!isAllowed()) {
+    document.getElementById('locked-banner').style.display = 'block';
+    loading.style.display = 'none';
 
-      onValue(rouletteRef(), snap => {
-        loading.style.display = 'none';
-        renderRouletteResult(snap.val());
-      });
-      return;
-    }
-
-    if (isMonday()) {
-      document.getElementById('mon-content').style.display = 'block';
-      if (isLastMondayOfMonth()) showWomenPopup();
-
-      onValue(rootRef(), snap => {
-        loading.style.display = 'none';
-        const d = snap.val() || {};
-        renderMonData(d);
-        renderCustomMenus(d.custom || {});
-      });
-    }
+    const pillsEl = document.getElementById('day-pills');
+    pillsEl.innerHTML = '';
+    DAY_NAMES.forEach((name, i) => {
+      const pill = document.createElement('span');
+      pill.className = 'day-pill ' + (ALLOWED_DAYS.includes(i) ? 'on' : 'off');
+      pill.textContent = name;
+      pillsEl.appendChild(pill);
+    });
+    return;
   }
+
+  if (isWednesday()) {
+    document.getElementById('main-title').innerHTML = '수요일은<span class="accent-wed">,</span><br>팀 뽑기 데이 🎲';
+    document.getElementById('total-badge').style.display = 'none';
+    document.getElementById('wed-page').style.display = 'block';
+
+    onValue(rouletteRef(), snap => {
+      loading.style.display = 'none';
+      renderRouletteResult(snap.val());
+    });
+    return;
+  }
+
+  if (isMonday()) {
+    document.getElementById('main-title').innerHTML = '오늘 점심<span class="accent">,</span><br>뭐 드실 건가요?';
+    document.getElementById('total-badge').style.display = 'inline-flex';
+    document.getElementById('mon-content').style.display = 'block';
+
+    if (isLastMondayOfMonth()) showWomenPopup();
+
+    onValue(rootRef(), snap => {
+      loading.style.display = 'none';
+      const d = snap.val() || {};
+      renderMonData(d);
+      renderCustomMenus(d.custom || {});
+    });
+    return;
+  }
+
+  // 3) 혹시 모를 예외
+  document.getElementById('locked-banner').style.display = 'block';
+  loading.style.display = 'none';
+}
 
   /* ══════════ 월요일 렌더 ══════════ */
   function renderMonData(allData) {
