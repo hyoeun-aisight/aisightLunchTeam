@@ -656,7 +656,7 @@
     { name:'El',       dept:'Android',  gender:'M' },
     { name:'JunO',     dept:'ALML',     gender:'M' },
     { name:'Hyunil',   dept:'ALML',     gender:'M' },
-    { name:'Doyoung',  dept:'PM',       gender:'M' },
+    { name:'Doyoung',  dept:'Manager',       gender:'M' },
     { name:'Sejun',    dept:'PM',       gender:'M' },
     { name:'Taesoo',   dept:'PM',       gender:'M' },
     { name:'Won',  dept:'Embedded',   gender:'M' },
@@ -665,7 +665,7 @@
   ];
 
   const CATEGORIES  = ['korean','chinese','western','japanese','salad','alone'];
-  const ALLOWED_DAYS = [1, 3, 4];
+  const ALLOWED_DAYS = [1, 2, 3, 4, 5];
   const DAY_NAMES    = ['일','월','화','수','목','금','토'];
   const ADMIN_PASSWORD = 'hyoeun01';
 
@@ -935,7 +935,7 @@
     document.getElementById('attend-count-num').textContent='0';
     document.getElementById('btn-spin').disabled=true;
 
-    // 마지막 주 월요일이면 남성만 (수요일 페이지에서 호출되는 건 아니지만 혹시 몰라 처리)
+    // 마지막 주 월요일은 남성만 룰렛 처리 (수요일 페이지에서 호출되는 건 아니지만 혹시 몰라 처리)
     const pool = (isLastMondayOfMonth() && isMonday())
       ? ALL_MEMBERS.filter(m=>m.gender==='M')
       : ALL_MEMBERS;
