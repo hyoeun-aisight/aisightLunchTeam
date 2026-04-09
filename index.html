@@ -687,9 +687,9 @@
   const TODAY = `${NOW.getFullYear()}-${String(NOW.getMonth()+1).padStart(2,'0')}-${String(NOW.getDate()).padStart(2,'0')}`;
   const DOW = NOW.getDay();
 
-const isMonday    = () => true;   // 👈 강제 월요일
-const isWednesday = () => false;
-const isAllowed   = () => true;
+const isMonday    = () => DOW === 1;
+const isWednesday = () => DOW === 3, 4;
+const isAllowed   = () => ALLOWED_DAYS.includes(DOW);
 
   function isLastMondayOfMonth() {
     if (!isMonday()) return false;
