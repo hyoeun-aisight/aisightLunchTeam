@@ -786,9 +786,11 @@ const isAllowed   = () => ALLOWED_DAYS.includes(DOW);
     return;
   }
 
-  if (isWednesday()) {
-    document.getElementById('main-title').innerHTML = '수요일은<span class="accent-wed">,</span><br>팀 뽑기 데이 🎲';
-    document.getElementById('total-badge').style.display = 'none';
+if (isWednesday() || isMonday()) {
+document.getElementById('main-title').innerHTML =
+  isWednesday()
+    ? '수요일은<span class="accent-wed">,</span><br>팀 뽑기 데이 🎲'
+    : '월요일도<span class="accent">,</span><br>랜덤 점심 🎲';    document.getElementById('total-badge').style.display = 'none';
     document.getElementById('wed-page').style.display = 'block';
 
     onValue(rouletteRef(), snap => {
