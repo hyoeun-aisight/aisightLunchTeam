@@ -665,14 +665,14 @@
     { name:'Sangwoon', dept:'Embedded', gender:'M' },
     { name:'Akmal',    dept:'Embedded', gender:'M' },
     { name:'Minseok',  dept:'Android',  gender:'M' },
-    { name:'Sangsoo',  dept:'Android',  gender:'M' },
+    { name:'Sangsu',  dept:'Android',  gender:'M' },
     { name:'Dowoo',    dept:'Android',  gender:'M' },
     { name:'El',       dept:'Android',  gender:'M' },
     { name:'JunO',     dept:'ALML',     gender:'M' },
     { name:'Hyunil',   dept:'ALML',     gender:'M' },
     { name:'Doyoung',  dept:'Manager',       gender:'M' },
     { name:'Sejun',    dept:'PM',       gender:'M' },
-    { name:'Taesoo',   dept:'PM',       gender:'M' },
+    { name:'Taesoo',   dept:'AE',       gender:'M' },
     { name:'Won',  dept:'Embedded',   gender:'M' },
     { name:'Siyeong',  dept:'QA',   gender:'M' },
     { name:'Jongmin',  dept:'QA',   gender:'M' },
@@ -789,8 +789,8 @@ const isAllowed   = () => ALLOWED_DAYS.includes(DOW);
 if (isWednesday() || isMonday()) {
 document.getElementById('main-title').innerHTML =
   isWednesday()
-    ? '수요일은<span class="accent-wed">,</span><br>팀 뽑기 데이 🎲'
-    : '월요일도<span class="accent">,</span><br>랜덤 점심 🎲';    document.getElementById('total-badge').style.display = 'none';
+    ? '수요일<span class="accent-wed">,</span><br>Aisight 랜덤 팀 점심 데이 🎲'
+    : '월요일<span class="accent">,</span><br>Aisight 랜덤 팀 점심 🎲';    document.getElementById('total-badge').style.display = 'none';
     document.getElementById('wed-page').style.display = 'block';
 
     onValue(rouletteRef(), snap => {
