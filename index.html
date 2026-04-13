@@ -789,8 +789,8 @@ const isAllowed   = () => ALLOWED_DAYS.includes(DOW);
 if (isWednesday() || isMonday()) {
 document.getElementById('main-title').innerHTML =
   isWednesday()
-    ? '수요일<span class="accent-wed">,</span><br>Aisight 랜덤 팀 점심 데이 🎲'
-    : '월요일<span class="accent">,</span><br>Aisight 랜덤 팀 점심 🎲';    document.getElementById('total-badge').style.display = 'none';
+    ? '월요일, 수요일<span class="accent-wed">,</span><br>Aisight 랜덤 팀 점심 데이 🎲'
+    : '월요일, 수요일<span class="accent">,</span><br>Aisight 랜덤 팀 점심 🎲';    document.getElementById('total-badge').style.display = 'none';
     document.getElementById('wed-page').style.display = 'block';
 
     onValue(rouletteRef(), snap => {
