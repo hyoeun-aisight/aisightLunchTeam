@@ -1016,7 +1016,7 @@ document.getElementById('main-title').innerHTML =
   function makeTeams(names){
     const members=names.map(n=>ALL_MEMBERS.find(m=>m.name===n)||{name:n,dept:'기타'});
     const n=members.length;
-    const teamSize=Math.round(n/Math.max(1,Math.round(n/5)));
+    const teamSize=Math.round(n/Math.max(1,Math.round(n/4)));
     const numTeams=Math.ceil(n/teamSize);
 
     function shuffle(arr){
