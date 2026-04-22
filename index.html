@@ -1016,36 +1016,88 @@ document.getElementById('main-title').innerHTML =
   function makeTeams(names){
     const members=names.map(n=>ALL_MEMBERS.find(m=>m.name===n)||{name:n,dept:'기타'});
     const n=members.length;
-    const teamSize=Math.round(n/Math.max(1,Math.round(n/4)));
-    const numTeams=Math.ceil(n/teamSize);
 
-    function shuffle(arr){
-      const a=[...arr];
-      for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
-      return a;
-    }
+    const MIN_TEAM_SIZE = 5;
+    const MAX_TEAM_SIZE = 7;
 
-    let best=null, bestScore=Infinity;
-    for(let t=0;t<300;t++){
-      const shuffled=shuffle(members);
-      const teams=Array.from({length:numTeams},()=>[]);
-      shuffled.forEach((m,i)=>teams[i%numTeams].push(m));
-      let score=0;
-      teams.forEach(team=>{
-        const depts=team.map(m=>m.dept);
-        depts.forEach((d,i)=>depts.slice(i+1).forEach(d2=>{ if(d===d2) score++; }));
-      });
-      if(score<bestScore){ bestScore=score; best=teams.map(t=>[...t]); }
-      if(bestScore===0) break;
+     function shuffle(arr){
+    const a = [...arr];
+    for(let i = a.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
     }
-    return best;
+    return a;
   }
+
+  
+  // 가능한 팀 수 범위 계산
+  // 각 팀이 5~7명이어야 하므로:
+  //   팀 수는 ceil(n / 7) 이상
+  //   팀 수는 floor(n / 5) 이하
+  let minTeams = Math.ceil(n / MAX_TEAM_SIZE);
+  let maxTeams = Math.floor(n / MIN_TEAM_SIZE);
+
+  // 조건상 불가능한 경우
+  // 예: 1~4명은 최소 5명 조건 충족 불가
+  if (maxTeams < 1 || minTeams > maxTeams) {
+    return null;
+  }
+
+  let best = null;
+  let bestScore = Infinity;
+
+  for(let t = 0; t < 500; t++){
+    const shuffled = shuffle(members);
+
+    // 가능한 팀 수 중 하나를 랜덤 선택
+    const numTeams =
+      Math.floor(Math.random() * (maxTeams - minTeams + 1)) + minTeams;
+
+    const teams = Array.from({ length: numTeams }, () => []);
+
+    // 먼저 균등 분배
+    shuffled.forEach((member, i) => {
+      teams[i % numTeams].push(member);
+    });
+
+    // 팀 인원 검증
+    const valid = teams.every(
+      team => team.length >= MIN_TEAM_SIZE && team.length <= MAX_TEAM_SIZE
+    );
+    if (!valid) continue;
+
+    // 같은 부서 겹침 최소화
+    let score = 0;
+    teams.forEach(team => {
+      const depts = team.map(m => m.dept);
+      for(let i = 0; i < depts.length; i++){
+        for(let j = i + 1; j < depts.length; j++){
+          if (depts[i] === depts[j]) score++;
+        }
+      }
+    });
+
+    if (score < bestScore) {
+      bestScore = score;
+      best = teams.map(team => [...team]);
+    }
+
+    if (bestScore === 0) break;
+  }
+
+  return best;
+}
 
   /* ══════════ 룰렛 실행 ══════════ */
   window.spinRoulette = async function(){
     if(!isAdmin) return;
     const names=[...checkedMembers];
-    if(names.length<2) return;
+    if(names.length<5) return;
+
+    const teams = makeTeams(names);
+    if (!teams) {
+    alert('팀을 5~7명으로 나눌 수 없어요. 출석 인원을 다시 확인해주세요.');
+    return;
 
     const btn=document.getElementById('btn-spin');
     btn.disabled=true; btn.textContent='🎲 뽑는 중...';
