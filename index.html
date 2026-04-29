@@ -573,7 +573,7 @@ h1{
           }
 
           // 이미 내 이름 정한 상태 ->                          내 카드만 출석 toggle
-          if (member.name !== myName) return;
+          if (!isAdmin && member.name !== myName) return;
 
           const myRef = ref(db, `roulette/${TODAY}/absent/${member.name}`);
           if (attendanceData[member.name]) {
