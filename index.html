@@ -396,7 +396,7 @@ h1{
       <h1>월요일, 수요일<span class="accent">.</span><br>랜덤 팀 점심 🎲</h1>
       <div class="meta-row">
         <span class="pill">📅 <span id="todayText"></span></span>
-        <span class="pill">👥 출석 <strong id="countTop">0</strong>명</span>
+        <span class="pill">🙅 불참 <strong id="countTop">0</strong>명</span>
         <span class="pill">💸 점심 지원비 1인 최대 30,000원(커피☕포함)</span>
       </div>
     </div>
@@ -419,7 +419,7 @@ h1{
       👉 Reimbursement 신청하기
     </a>
 <div class="card">
-  <div class="section-title">👤 내 이름 선택 / 출석 체크</div>
+  <div class="section-title">👤 내 이름 선택 / 불 체크</div>
 
   <div class="my-panel">
     <div class="my-selected" id="mySelectedBox">
@@ -429,8 +429,8 @@ h1{
   </div>
 
   <div class="stats">
-    <div class="stat">현재 출석: <strong id="countInline">0</strong>명</div>
-    <div class="stat">내 이름 카드를 한 번 누르면 선택, 다시 누르면 출석 체크</div>
+    <div class="stat">현재 불참: <strong id="countInline">0</strong>명</div>
+    <div class="stat">점심 룰렛 참여 원하지 않는 분은 체크해 주세요</div>
   </div>
 
   <div class="grid" id="attendanceGrid"></div>
@@ -523,7 +523,7 @@ h1{
     const now = new Date();
     const TODAY = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
-    const attendanceRootRef = ref(db, `roulette/${TODAY}/attendance`);
+    const absentRootRef = ref(db, `roulette/${TODAY}/absent`);
     const resultRef = ref(db, `roulette/${TODAY}/result`);
 
     let myName = localStorage.getItem("lunch_my_name") || "";
@@ -602,10 +602,10 @@ h1{
             return;
           }
 
-          // 이미 내 이름 정한 상태 -> 내 카드만 출석 toggle
+          // 이미 내 이름 정한 상태 ->                          내 카드만 출석 toggle
           if (member.name !== myName) return;
 
-          const myRef = ref(db, `roulette/${TODAY}/attendance/${member.name}`);
+          const myRef = ref(db, `roulette/${TODAY}/absent/${member.name}`);
           if (attendanceData[member.name]) {
             await remove(myRef);
           } else {
@@ -709,48 +709,49 @@ h1{
       return bestTeams;
     }
 
-    async function spinRoulette() {
-      if (!isAdmin) return;
+async function spinRoulette() {
+  if (!isAdmin) return;
 
-      const snap = await get(attendanceRootRef);
-      const raw = snap.val() || {};
-      const members = Object.values(raw);
+  const snap = await get(absentRootRef);
+  const absent = snap.val() || {};
+  const absentNames = new Set(Object.keys(absent));
 
-      if (members.length < 2) {
-        alert("출석 인원이 2명 이상이어야 팀을 뽑을 수 있어요.");
-        return;
-      }
+  const members = MEMBERS.filter(m => !absentNames.has(m.name));
 
-      spinBtn.disabled = true;
-      spinBtn.textContent = "🎲 뽑는 중...";
+  if (members.length < 2) {
+    alert("참석 인원이 2명 이상이어야 팀을 뽑을 수 있어요.");
+    return;
+  }
 
-      const names = members.map(m => m.name);
-      rouletteStage.innerHTML = '<div class="spinning" id="spinDisplay">?</div>';
-      const spinDisplay = document.getElementById("spinDisplay");
+  spinBtn.disabled = true;
+  spinBtn.textContent = "🎲 뽑는 중...";
 
-      let tick = 0;
-      const interval = setInterval(() => {
-        spinDisplay.textContent = names[tick++ % names.length];
-      }, 100);
+  const names = members.map(m => m.name);
+  rouletteStage.innerHTML = '<div class="spinning" id="spinDisplay">?</div>';
+  const spinDisplay = document.getElementById("spinDisplay");
 
-      await new Promise(resolve => setTimeout(resolve, 2200));
-      clearInterval(interval);
+  let tick = 0;
+  const interval = setInterval(() => {
+    spinDisplay.textContent = names[tick++ % names.length];
+  }, 100);
 
-      const teams = makeBalancedTeams(members);
-      const payload = {
-        teams: teams.map((team, i) => ({
-          label: `Team ${i + 1}`,
-          color: TEAM_COLORS[i % TEAM_COLORS.length],
-          members: team
-        })),
-        timestamp: Date.now()
-      };
+  await new Promise(resolve => setTimeout(resolve, 2200));
+  clearInterval(interval);
 
-      await set(resultRef, payload);
+  const teams = makeBalancedTeams(members);
 
-      spinBtn.disabled = false;
-      spinBtn.textContent = "🎲 팀 뽑기";
-    }
+  await set(resultRef, {
+    teams: teams.map((team, i) => ({
+      label: `Team ${i + 1}`,
+      color: TEAM_COLORS[i % TEAM_COLORS.length],
+      members: team
+    })),
+    timestamp: Date.now()
+  });
+
+  spinBtn.disabled = false;
+  spinBtn.textContent = "🎲 팀 뽑기";
+}
 
     function renderResult(data) {
       if (!data || !data.teams || !data.teams.length) {
