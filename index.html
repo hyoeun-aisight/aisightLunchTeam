@@ -808,7 +808,7 @@ async function spinRoulette() {
       if (!isAdmin) return;
       const ok = confirm("출석과 결과를 모두 초기화할까요?");
       if (!ok) return;
-      await remove(attendanceRootRef);
+      await remove(absentRootRef);
       await remove(resultRef);
     }
 
@@ -825,7 +825,7 @@ async function spinRoulette() {
     resetResultBtn.addEventListener("click", resetResultOnly);
     resetAllBtn.addEventListener("click", resetAll);
 
-    onValue(attendanceRootRef, snap => {
+    onValue(absentRootRef, snap => {
       attendanceData = snap.val() || {};
       updateCounts();
       updateMySelectedBox();
