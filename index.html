@@ -634,6 +634,9 @@ h1{
 
       if (n <= 4) return [memberObjects];
 
+      const miniSize = Math.min(...teams.map(t => t.length));
+      if (minSize < 4) continue ;
+      
       let bestTeams = null;
       let bestScore = Infinity;
 
