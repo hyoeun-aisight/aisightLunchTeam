@@ -603,7 +603,7 @@ h1{
 
     function getTeamCount(n) {
      const maxTeams = Math.floor(n / 4);
-      return Math.round(1, maxTeams);
+      return Math.max(1, maxTeams);
     }
 
     function scoreTeams(teams) {
