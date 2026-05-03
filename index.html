@@ -418,6 +418,8 @@ h1{
        style="display:inline-block;margin-top:6px;font-size:13px;font-weight:700;color:#0e7490;text-decoration:none;">
       👉 Reimbursement 신청하기
     </a>
+</div>
+    
 <div class="card">
   <div class="section-title">👤 내 이름 선택 / 불참 체크</div>
 
@@ -634,8 +636,8 @@ h1{
 
       if (n <= 4) return [memberObjects];
 
-      const miniSize = Math.min(...teams.map(t => t.length));
-      if (minSize < 4) continue ;
+     // const miniSize = Math.min(...teams.map(t => t.length));
+      if (minSize < 4) continue ;//
       
       let bestTeams = null;
       let bestScore = Infinity;
