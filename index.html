@@ -548,7 +548,7 @@ h1{
     function renderAttendanceGrid() {
       attendanceGrid.innerHTML = "";
 
-      MEMBERS.forEach(member => {
+      shuffle(MEMBERS).forEach(member => {
         const isMine = member.name === myName;
         const isChecked = !!attendanceData[member.name];
 
