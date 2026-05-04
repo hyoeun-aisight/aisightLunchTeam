@@ -476,7 +476,6 @@ If you do not wish to participate due to personal reasons, make sure to complete
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import { getDatabase, ref, set, remove, onValue, get } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
 console.log("JS loaded");
-console.log("MEMBERS count:", MEMBERS.length);
     
     const firebaseConfig = {
       apiKey: "AIzaSyDwYLPPFyBsAZzHuAFCkH1Z6GrI7_0T8BI",
@@ -520,7 +519,7 @@ const MEMBERS = [
   { name:'Taewook',  dept:'Infra',    gender:'M' },
 ];
     
-
+console.log("MEMBERS count:", MEMBERS.length);
     const ADMIN_PASSWORD = "hyoeun01";
     const TEAM_COLORS = ['#0e7490','#7c5cfc','#e85d3a','#389e0d','#c41d7f','#d4380d','#1872c8'];
 
