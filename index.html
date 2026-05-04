@@ -600,14 +600,22 @@ console.log("MEMBERS count:", MEMBERS.length);
 
         chip.addEventListener("click", async () => {
           // 아직 내 이름 선택 전 -> 이 카드를 내 이름으로 지정
-          if (!myName) {
-            myName = member.name;
-            localStorage.setItem("lunch_my_name", myName);
-            updateMySelectedBox();
-            renderAttendanceGrid();
-            return;
-          }
+         if (!myName) {
+  myName = member.name;
+  localStorage.setItem("lunch_my_name", myName);
 
+  const myRef = ref(db, `roulette/${TODAY}/absent/${member.name}`);
+  await set(myRef, {
+    name: member.name,
+    dept: member.dept,
+    gender: member.gender,
+    checkedAt: Date.now()
+  });
+
+  updateMySelectedBox();
+  renderAttendanceGrid();
+  return;
+}
           // 이미 내 이름 정한 상태 ->                          내 카드만 출석 toggle
           if (!isAdmin && member.name !== myName) return;
 
