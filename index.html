@@ -473,9 +473,11 @@ If you do not wish to participate due to personal reasons, make sure to complete
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import { getDatabase, ref, set, remove, onValue, get } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
-
+console.log("JS loaded");
+console.log("MEMBERS count:", MEMBERS.length);
+    
     const firebaseConfig = {
       apiKey: "AIzaSyDwYLPPFyBsAZzHuAFCkH1Z6GrI7_0T8BI",
       authDomain: "aisight-meeting-room.firebaseapp.com",
