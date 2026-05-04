@@ -829,20 +829,20 @@ async function spinRoulette() {
     resetResultBtn.addEventListener("click", resetResultOnly);
     resetAllBtn.addEventListener("click", resetAll);
 
-    onValue(absentRootRef, snap => {
-      attendanceData = snap.val() || {};
-      updateCounts();
-      updateMySelectedBox();
-      renderAttendanceGrid();
-    });
+updateCounts();
+updateMySelectedBox();
+renderAttendanceGrid();
 
-    onValue(resultRef, snap => {
-      renderResult(snap.val());
-    });
+onValue(absentRootRef, snap => {
+  attendanceData = snap.val() || {};
+  updateCounts();
+  updateMySelectedBox();
+  renderAttendanceGrid();
+});
 
-    updateCounts();
-    updateMySelectedBox();
-    renderAttendanceGrid();
+onValue(resultRef, snap => {
+  renderResult(snap.val());
+});
   </script>
 
 </body>
